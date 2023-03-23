@@ -14,14 +14,19 @@ contract SafeFinance is ERC20, ERC20Burnable, ERC20Snapshot, Ownable, Pausable, 
         _mint(address(this), 100000000 * 10 ** decimals());
     }
 
-     
-    event ReceivedEther(address sender, uint amount);
-    
-    function receiveEther() external payable {
-        require(amount >= , "not enough funds")
-      emit ReceivedEther(msg.sender, msg.value);
+    uint public amountToReceive;
+
+    event Received(address indexed sender, uint amount);
+
+    function receiveEther(uint _amountToReceive) {
+          amountToReceive = _amountToReceive;
     }
-    
+
+    receive() external payable {
+        require(amountToReceive >= (3 * 15 ** decimals()), "not up to required amount");
+        emit Received(msg.sender, amountToReceive);
+    }
+
     function buyTokenWithToken(address _tokenContractAddress, uint256 _tokenAmount) internal {
         IERC20(_tokenContractAddress).transferFrom(msg.sender, address(this), _tokenAmount);
         uint256 mintMyTokenAmount = (100 * _tokenAmount * 10 ** decimals());
